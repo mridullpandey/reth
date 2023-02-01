@@ -44,25 +44,6 @@ pub fn validate_header_standalone(
         return Err(Error::BaseFeeMissing)
     }
 
-    // EIP-3675: Upgrade consensus to Proof-of-Stake:
-    // https://eips.ethereum.org/EIPS/eip-3675#replacing-difficulty-with-0
-    if Some(header.number) >= chain_spec.paris_status().block_number() {
-        if header.difficulty != U256::ZERO {
-            return Err(Error::TheMergeDifficultyIsNotZero)
-        }
-
-        if header.nonce != 0 {
-            return Err(Error::TheMergeNonceIsNotZero)
-        }
-
-        if header.ommers_hash != EMPTY_OMMER_ROOT {
-            return Err(Error::TheMergeOmmerRootIsNotEmpty)
-        }
-
-        // mixHash is used instead of difficulty inside EVM
-        // https://eips.ethereum.org/EIPS/eip-4399#using-mixhash-field-instead-of-difficulty
-    }
-
     Ok(())
 }
 
@@ -259,9 +240,10 @@ pub fn validate_header_regarding_parent(
     }
 
     // difficulty check is done by consensus.
-    if chain_spec.paris_status().block_number() > Some(child.number) {
-        // TODO how this needs to be checked? As ice age did increment it by some formula
-    }
+    // TODO(onbjerg): Unsure what the check here is supposed to be, but it should be moved to
+    // [BeaconConsensus]. if chain_spec.paris_status().block_number() > Some(child.number) {
+    //    // TODO how this needs to be checked? As ice age did increment it by some formula
+    //}
 
     let mut parent_gas_limit = parent.gas_limit;
 
