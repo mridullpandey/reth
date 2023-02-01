@@ -145,6 +145,8 @@ impl Header {
         };
 
         if buf.remaining() < h.payload_length {
+            // maybe this check belongs in the derive impl for types that implement Decodable
+            println!("buf remaining: {}, payload length: {}", buf.remaining(), h.payload_length);
             return Err(DecodeError::InputTooShort)
         }
 
